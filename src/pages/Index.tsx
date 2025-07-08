@@ -24,8 +24,23 @@ import {
   GraduationCap,
   Zap,
   Star,
-  CheckCircle
+  CheckCircle,
+  Upload,
+  Plus,
+  Trash2,
+  FileUp,
+  HelpCircle,
+  Edit3
 } from 'lucide-react';
+
+interface Question {
+  id: string;
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+  type: 'multiple-choice' | 'true-false' | 'short-answer';
+}
 
 interface ExamConfig {
   title: string;
@@ -40,6 +55,7 @@ interface ExamConfig {
   allowNavigation: boolean;
   randomizeQuestions: boolean;
   theme: string;
+  questions: Question[];
 }
 
 const templates = [
@@ -86,14 +102,175 @@ const Index = () => {
     showTimer: true,
     allowNavigation: true,
     randomizeQuestions: false,
-    theme: 'light'
+    theme: 'light',
+    questions: []
   });
 
   const [previewMode, setPreviewMode] = useState(false);
   const [generatedHtml, setGeneratedHtml] = useState('');
+  const [bulkQuestions, setBulkQuestions] = useState('');
+  const [newQuestion, setNewQuestion] = useState<Partial<Question>>({
+    question: '',
+    options: ['', '', '', ''],
+    correctAnswer: 0,
+    explanation: '',
+    type: 'multiple-choice'
+  });
 
   const handleInputChange = (field: keyof ExamConfig, value: string | boolean) => {
     setConfig(prev => ({ ...prev, [field]: value }));
+  };
+
+  const addQuestion = () => {
+    if (!newQuestion.question || !newQuestion.options?.every(opt => opt.trim())) {
+      toast.error('Please fill in all question fields');
+      return;
+    }
+
+    const question: Question = {
+      id: Date.now().toString(),
+      question: newQuestion.question!,
+      options: newQuestion.options!,
+      correctAnswer: newQuestion.correctAnswer!,
+      explanation: newQuestion.explanation || '',
+      type: newQuestion.type as 'multiple-choice' | 'true-false' | 'short-answer'
+    };
+
+    setConfig(prev => ({
+      ...prev,
+      questions: [...prev.questions, question]
+    }));
+
+    setNewQuestion({
+      question: '',
+      options: ['', '', '', ''],
+      correctAnswer: 0,
+      explanation: '',
+      type: 'multiple-choice'
+    });
+
+    toast.success('Question added successfully!');
+  };
+
+  const removeQuestion = (id: string) => {
+    setConfig(prev => ({
+      ...prev,
+      questions: prev.questions.filter(q => q.id !== id)
+    }));
+    toast.success('Question removed');
+  };
+
+  const parseBulkQuestions = () => {
+    if (!bulkQuestions.trim()) {
+      toast.error('Please enter questions in the text area');
+      return;
+    }
+
+    try {
+      const lines = bulkQuestions.split('\n').filter(line => line.trim());
+      const questions: Question[] = [];
+      let currentQuestion: Partial<Question> = {};
+      let optionIndex = 0;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        if (line.startsWith('Q:') || line.startsWith('Question:')) {
+          // Save previous question if exists
+          if (currentQuestion.question) {
+            questions.push({
+              id: Date.now().toString() + Math.random(),
+              question: currentQuestion.question,
+              options: currentQuestion.options || [],
+              correctAnswer: currentQuestion.correctAnswer || 0,
+              explanation: currentQuestion.explanation || '',
+              type: 'multiple-choice'
+            });
+          }
+          
+          // Start new question
+          currentQuestion = {
+            question: line.replace(/^(Q:|Question:)\s*/, ''),
+            options: [],
+            correctAnswer: 0
+          };
+          optionIndex = 0;
+        } else if (line.match(/^[A-D]\)/)) {
+          // Option line
+          const optionText = line.replace(/^[A-D]\)\s*/, '');
+          if (!currentQuestion.options) currentQuestion.options = [];
+          currentQuestion.options[optionIndex] = optionText;
+          optionIndex++;
+        } else if (line.startsWith('Answer:') || line.startsWith('Correct:')) {
+          // Answer line
+          const answerText = line.replace(/^(Answer:|Correct:)\s*/, '').toUpperCase();
+          const answerMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+          currentQuestion.correctAnswer = answerMap[answerText] || 0;
+        } else if (line.startsWith('Explanation:')) {
+          // Explanation line
+          currentQuestion.explanation = line.replace(/^Explanation:\s*/, '');
+        }
+      }
+
+      // Add the last question
+      if (currentQuestion.question) {
+        questions.push({
+          id: Date.now().toString() + Math.random(),
+          question: currentQuestion.question,
+          options: currentQuestion.options || [],
+          correctAnswer: currentQuestion.correctAnswer || 0,
+          explanation: currentQuestion.explanation || '',
+          type: 'multiple-choice'
+        });
+      }
+
+      if (questions.length === 0) {
+        toast.error('No valid questions found. Please check the format.');
+        return;
+      }
+
+      setConfig(prev => ({
+        ...prev,
+        questions: [...prev.questions, ...questions]
+      }));
+
+      setBulkQuestions('');
+      toast.success(`${questions.length} questions imported successfully!`);
+    } catch (error) {
+      toast.error('Error parsing questions. Please check the format.');
+      console.error('Parse error:', error);
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      setBulkQuestions(content);
+      toast.success('File loaded successfully! Click "Import Questions" to process.');
+    };
+    reader.readAsText(file);
+  };
+
+  const generateQuestionsHtml = (questions: Question[]) => {
+    return questions.map((q, index) => `
+      <div class="question-container" data-question="${index + 1}">
+        <h3 class="question-title">Question ${index + 1}</h3>
+        <p class="question-text">${q.question}</p>
+        <div class="options-container">
+          ${q.options.map((option, optIndex) => `
+            <label class="option-label">
+              <input type="radio" name="question_${index + 1}" value="${optIndex}" ${optIndex === q.correctAnswer ? 'data-correct="true"' : ''}>
+              <span class="option-text">${String.fromCharCode(65 + optIndex)}. ${option}</span>
+            </label>
+          `).join('')}
+        </div>
+        ${q.explanation ? `<div class="explanation" style="display: none;">${q.explanation}</div>` : ''}
+      </div>
+    `).join('');
   };
 
   const generateHtml = async () => {
@@ -107,6 +284,9 @@ const Index = () => {
       const templateResponse = await fetch(`/templates/${getTemplateFileName(config.template)}`);
       let templateHtml = await templateResponse.text();
 
+      // Generate questions HTML
+      const questionsHtml = config.questions.length > 0 ? generateQuestionsHtml(config.questions) : '<p>No questions added yet. Add questions using the Questions tab.</p>';
+
       // Replace placeholders in the template
       templateHtml = templateHtml
         .replace(/{{EXAM_TITLE}}/g, config.title)
@@ -115,6 +295,8 @@ const Index = () => {
         .replace(/{{INSTRUCTIONS}}/g, config.instructions)
         .replace(/{{QUESTIONS_URL}}/g, config.questionsUrl || '')
         .replace(/{{ANSWERS_URL}}/g, config.answersUrl || '')
+        .replace(/{{QUESTIONS_HTML}}/g, questionsHtml)
+        .replace(/{{QUESTIONS_COUNT}}/g, config.questions.length.toString())
         .replace(/{{SHOW_TIMER}}/g, config.showTimer.toString())
         .replace(/{{ALLOW_NAVIGATION}}/g, config.allowNavigation.toString())
         .replace(/{{RANDOMIZE_QUESTIONS}}/g, config.randomizeQuestions.toString())
@@ -150,6 +332,39 @@ const Index = () => {
           --text-color: #1f2937;
           --border-color: #e5e7eb;
         }
+        .question-container {
+          background: white;
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          padding: 20px;
+          margin: 20px 0;
+        }
+        .question-title {
+          color: var(--primary-color);
+          font-size: 1.2em;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+        .question-text {
+          font-size: 1.1em;
+          margin-bottom: 15px;
+          line-height: 1.5;
+        }
+        .option-label {
+          display: block;
+          padding: 10px;
+          margin: 5px 0;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        .option-label:hover {
+          background-color: #f0f9ff;
+        }
+        .option-text {
+          margin-left: 10px;
+        }
       `,
       dark: `
         :root {
@@ -159,6 +374,41 @@ const Index = () => {
           --border-color: #374151;
         }
         body { background-color: var(--background-color); color: var(--text-color); }
+        .question-container {
+          background: #374151;
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          padding: 20px;
+          margin: 20px 0;
+        }
+        .question-title {
+          color: var(--primary-color);
+          font-size: 1.2em;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+        .question-text {
+          font-size: 1.1em;
+          margin-bottom: 15px;
+          line-height: 1.5;
+          color: var(--text-color);
+        }
+        .option-label {
+          display: block;
+          padding: 10px;
+          margin: 5px 0;
+          border: 1px solid #4b5563;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          color: var(--text-color);
+        }
+        .option-label:hover {
+          background-color: #4b5563;
+        }
+        .option-text {
+          margin-left: 10px;
+        }
       `,
       blue: `
         :root {
@@ -167,6 +417,39 @@ const Index = () => {
           --text-color: #1e3a8a;
           --border-color: #bfdbfe;
         }
+        .question-container {
+          background: white;
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          padding: 20px;
+          margin: 20px 0;
+        }
+        .question-title {
+          color: var(--primary-color);
+          font-size: 1.2em;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+        .question-text {
+          font-size: 1.1em;
+          margin-bottom: 15px;
+          line-height: 1.5;
+        }
+        .option-label {
+          display: block;
+          padding: 10px;
+          margin: 5px 0;
+          border: 1px solid var(--border-color);
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        .option-label:hover {
+          background-color: #dbeafe;
+        }
+        .option-text {
+          margin-left: 10px;
+        }
       `,
       green: `
         :root {
@@ -174,6 +457,39 @@ const Index = () => {
           --background-color: #ecfdf5;
           --text-color: #064e3b;
           --border-color: #a7f3d0;
+        }
+        .question-container {
+          background: white;
+          border: 1px solid var(--border-color);
+          border-radius: 8px;
+          padding: 20px;
+          margin: 20px 0;
+        }
+        .question-title {
+          color: var(--primary-color);
+          font-size: 1.2em;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+        .question-text {
+          font-size: 1.1em;
+          margin-bottom: 15px;
+          line-height: 1.5;
+        }
+        .option-label {
+          display: block;
+          padding: 10px;
+          margin: 5px 0;
+          border: 1px solid var(--border-color);
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        .option-label:hover {
+          background-color: #d1fae5;
+        }
+        .option-text {
+          margin-left: 10px;
         }
       `
     };
@@ -252,9 +568,10 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <Tabs defaultValue="basic" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4">
+                    <TabsList className="grid w-full grid-cols-5">
                       <TabsTrigger value="basic">Basic Info</TabsTrigger>
                       <TabsTrigger value="template">Template</TabsTrigger>
+                      <TabsTrigger value="questions">Questions</TabsTrigger>
                       <TabsTrigger value="urls">URLs</TabsTrigger>
                       <TabsTrigger value="advanced">Advanced</TabsTrigger>
                     </TabsList>
@@ -347,6 +664,195 @@ const Index = () => {
                             </Card>
                           ))}
                         </div>
+                      </div>
+                    </TabsContent>
+
+                    <TabsContent value="questions" className="space-y-6 mt-6">
+                      <div className="space-y-6">
+                        {/* Bulk Import Section */}
+                        <Card className="border-2 border-dashed border-blue-300 bg-blue-50">
+                          <CardHeader>
+                            <div className="flex items-center space-x-2">
+                              <Upload className="h-5 w-5 text-blue-600" />
+                              <CardTitle className="text-lg">Bulk Import Questions</CardTitle>
+                            </div>
+                            <CardDescription>
+                              Upload a text file or paste questions in the specified format
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <div className="flex items-center space-x-4">
+                              <div className="flex-1">
+                                <Label htmlFor="file-upload" className="cursor-pointer">
+                                  <div className="flex items-center space-x-2 p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors">
+                                    <FileUp className="h-5 w-5 text-gray-500" />
+                                    <span className="text-sm text-gray-600">Choose file or drag and drop</span>
+                                  </div>
+                                  <Input
+                                    id="file-upload"
+                                    type="file"
+                                    accept=".txt,.csv"
+                                    onChange={handleFileUpload}
+                                    className="hidden"
+                                  />
+                                </Label>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <Label>Or paste questions here:</Label>
+                              <Textarea
+                                placeholder={`Format example:
+Q: What is 2 + 2?
+A) 3
+B) 4
+C) 5
+D) 6
+Answer: B
+Explanation: 2 + 2 equals 4
+
+Q: The capital of France is?
+A) London
+B) Berlin
+C) Paris
+D) Madrid
+Answer: C`}
+                                value={bulkQuestions}
+                                onChange={(e) => setBulkQuestions(e.target.value)}
+                                className="min-h-[200px] font-mono text-sm"
+                              />
+                            </div>
+                            
+                            <Button 
+                              onClick={parseBulkQuestions}
+                              className="w-full bg-blue-600 hover:bg-blue-700"
+                              disabled={!bulkQuestions.trim()}
+                            >
+                              <Upload className="h-4 w-4 mr-2" />
+                              Import Questions
+                            </Button>
+                          </CardContent>
+                        </Card>
+
+                        {/* Manual Question Entry */}
+                        <Card>
+                          <CardHeader>
+                            <div className="flex items-center space-x-2">
+                              <Plus className="h-5 w-5 text-green-600" />
+                              <CardTitle className="text-lg">Add Individual Question</CardTitle>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                              <Label>Question Type</Label>
+                              <Select 
+                                value={newQuestion.type} 
+                                onValueChange={(value) => setNewQuestion(prev => ({ ...prev, type: value as any }))}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="multiple-choice">Multiple Choice</SelectItem>
+                                  <SelectItem value="true-false">True/False</SelectItem>
+                                  <SelectItem value="short-answer">Short Answer</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label>Question</Label>
+                              <Textarea
+                                placeholder="Enter your question here..."
+                                value={newQuestion.question}
+                                onChange={(e) => setNewQuestion(prev => ({ ...prev, question: e.target.value }))}
+                                className="min-h-[80px]"
+                              />
+                            </div>
+
+                            {newQuestion.type === 'multiple-choice' && (
+                              <div className="space-y-3">
+                                <Label>Options</Label>
+                                {newQuestion.options?.map((option, index) => (
+                                  <div key={index} className="flex items-center space-x-2">
+                                    <span className="w-8 text-center font-medium">{String.fromCharCode(65 + index)}.</span>
+                                    <Input
+                                      placeholder={`Option ${String.fromCharCode(65 + index)}`}
+                                      value={option}
+                                      onChange={(e) => {
+                                        const newOptions = [...(newQuestion.options || [])];
+                                        newOptions[index] = e.target.value;
+                                        setNewQuestion(prev => ({ ...prev, options: newOptions }));
+                                      }}
+                                    />
+                                    <input
+                                      type="radio"
+                                      name="correct-answer"
+                                      checked={newQuestion.correctAnswer === index}
+                                      onChange={() => setNewQuestion(prev => ({ ...prev, correctAnswer: index }))}
+                                      className="w-4 h-4"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            <div className="space-y-2">
+                              <Label>Explanation (Optional)</Label>
+                              <Textarea
+                                placeholder="Provide an explanation for the correct answer..."
+                                value={newQuestion.explanation}
+                                onChange={(e) => setNewQuestion(prev => ({ ...prev, explanation: e.target.value }))}
+                                className="min-h-[60px]"
+                              />
+                            </div>
+
+                            <Button onClick={addQuestion} className="w-full bg-green-600 hover:bg-green-700">
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add Question
+                            </Button>
+                          </CardContent>
+                        </Card>
+
+                        {/* Questions List */}
+                        {config.questions.length > 0 && (
+                          <Card>
+                            <CardHeader>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                  <HelpCircle className="h-5 w-5 text-purple-600" />
+                                  <CardTitle className="text-lg">Questions ({config.questions.length})</CardTitle>
+                                </div>
+                                <Badge variant="outline">{config.questions.length} questions</Badge>
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-4 max-h-96 overflow-y-auto">
+                                {config.questions.map((question, index) => (
+                                  <div key={question.id} className="p-4 border rounded-lg bg-gray-50">
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex-1">
+                                        <h4 className="font-medium text-sm text-gray-600">Question {index + 1}</h4>
+                                        <p className="mt-1 text-sm">{question.question}</p>
+                                        <div className="mt-2 text-xs text-gray-500">
+                                          Correct Answer: {String.fromCharCode(65 + question.correctAnswer)}
+                                        </div>
+                                      </div>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => removeQuestion(question.id)}
+                                        className="text-red-600 hover:text-red-800"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
                       </div>
                     </TabsContent>
 
@@ -544,6 +1050,38 @@ const Index = () => {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Questions Summary */}
+              {config.questions.length > 0 && (
+                <Card className="shadow-lg border-0 bg-white/70 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex items-center space-x-2">
+                      <HelpCircle className="h-5 w-5 text-orange-600" />
+                      <CardTitle>Questions Summary</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Total Questions:</span>
+                        <Badge variant="secondary">{config.questions.length}</Badge>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Multiple Choice:</span>
+                        <span className="text-sm">{config.questions.filter(q => q.type === 'multiple-choice').length}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">True/False:</span>
+                        <span className="text-sm">{config.questions.filter(q => q.type === 'true-false').length}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm text-gray-600">Short Answer:</span>
+                        <span className="text-sm">{config.questions.filter(q => q.type === 'short-answer').length}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         ) : (
