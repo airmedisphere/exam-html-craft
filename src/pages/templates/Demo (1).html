@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Questions</title>
+    <style>
+        @font-face {
+            font-family: 'Mangal';
+            src: url('https://appxcontent.kaxa.in/fonts/MANGAL.ttf') format('truetype');
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'KOKILA';
+            src: url('https://appxcontent.kaxa.in/fonts/kokila.ttf') format('truetype');
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Kruti Dev';
+            src: url('https://appxcontent.kaxa.in/fonts/k010.TTF') format('truetype');
+            font-display: swap;
+        }
+        
+        :root {
+            --primary-color: #4285f4;
+            --accent-color: #34a853;
+            --warning-color: #fbbc05;
+            --danger-color: #ea4335;
+            --light-bg: #f8f9fa;
+            --dark-bg: #202124;
+            --dark-text: #202124;
+            --light-text: #5f6368;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-text);
+            background-color: var(--light-bg);
+            overflow-wrap: break-word;
+        }
+        
+        /* Header Styles */
+        .app-header {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .app-name {
+            color: var(--primary-color);
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+            font-family: 'Arial Black', Gadget, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #6d9eeb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding: 5px 0;
+        }
+        
+        .app-divider {
+            height: 3px;
+            width: 80px;
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+            margin: 0 auto 15px;
+            border-radius: 2px;
+        }
+        
+        .exam-title {
+            color: var(--accent-color);
+            font-size: 1.7rem;
+            margin-bottom: 15px;
+            font-family: 'Georgia', serif;
+            font-weight: 600;
+            line-height: 1.3;
+            display: block;
+            padding: 0 10px;
+        }
+        
+        /* Start Screen */
+        .start-screen {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+        
+        .exam-info {
+            margin-bottom: 30px;
+            text-align: left;
+            display: inline-block;
+        }
+        
+        .exam-info-item {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .exam-info-item strong {
+            color: var(--primary-color);
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 5px;
+            cursor: pointer;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            min-width: 150px;
+        }
+        
+        .btn:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+        
+        .btn-accent:hover {
+            background-color: #2d9249;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e6ac00;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #d33426;
+        }
+        
+        /* Exam Container */
+        .exam-container {
+            display: none;
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        /* Exam Header */
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            position: relative;
+        }
+        
+        .exam-header-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-counter {
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .timer {
+            font-family: monospace;
+            font-size: 1.2rem;
+            background-color: rgba(0,0,0,0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .time-warning {
+            background-color: var(--warning-color);
+            color: var(--dark-text);
+        }
+        
+        .time-danger {
+            background-color: var(--danger-color);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .nav-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        .nav-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        /* Question Area */
+        .question-area {
+            padding: 25px;
+        }
+        
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 15px 0;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        /* Options */
+        .options-container {
+            margin: 20px 0;
+        }
+        
+        .option {
+            display: block;
+            margin-bottom: 12px;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-left: 4px solid #ddd;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option:hover {
+            transform: translateX(5px);
+            background-color: rgba(66, 133, 244, 0.1);
+        }
+        
+        .option.selected {
+            background-color: rgba(66, 133, 244, 0.2);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .option.correct {
+            background-color: rgba(52, 168, 83, 0.2);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .option.incorrect {
+            background-color: rgba(234, 67, 53, 0.2);
+            border-left: 4px solid var(--danger-color);
+        }
+        
+        .option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .option-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .option-number {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        
+        .option.selected .option-number {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .option.correct .option-number {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .option.incorrect .option-number {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .option-text {
+            flex-grow: 1;
+        }
+        
+        .option-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .nav-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Question Palette */
+        .palette-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .palette-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .question-palette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .palette-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .palette-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .palette-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .palette-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light-text);
+        }
+        
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 10px;
+        }
+        
+        .palette-item {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eee;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: bold;
+        }
+        
+        .palette-item:hover {
+            transform: scale(1.1);
+        }
+        
+        .palette-item.current {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .palette-item.answered {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .palette-item.marked {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .palette-item.not-visited {
+            background-color: #ddd;
+            color: var(--light-text);
+        }
+        
+        /* Result Screen */
+        .result-screen {
+            display: none;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .result-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-subtitle {
+            color: var(--light-text);
+            font-size: 1.2rem;
+        }
+        
+        .score-card {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .score-item {
+            background-color: var(--light-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .score-label {
+            color: var(--light-text);
+        }
+        
+        .correct-answer .score-value {
+            color: var(--accent-color);
+        }
+        
+        .wrong-answer .score-value {
+            color: var(--danger-color);
+        }
+        
+        .accuracy .score-value {
+            color: var(--primary-color);
+        }
+        
+        .result-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        /* Review Questions */
+        .review-container {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .review-question {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .review-question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .review-question-number {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .review-status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .status-correct {
+            background-color: rgba(52, 168, 83, 0.2);
+            color: var(--accent-color);
+        }
+        
+        .status-incorrect {
+            background-color: rgba(234, 67, 53, 0.2);
+            color: var(--danger-color);
+        }
+        
+        .review-question-text {
+            margin-bottom: 15px;
+        }
+        
+        .review-answer {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+        
+        .user-answer {
+            background-color: rgba(66, 133, 244, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .correct-answer-review {
+            background-color: rgba(52, 168, 83, 0.1);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .review-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .review-solution {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(66, 133, 244, 0.05);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .solution-heading {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        /* Language Toggle */
+        .language-toggle {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+        
+        .toggle-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        
+        .toggle-btn.active {
+            background-color: rgba(255,255,255,0.3);
+            font-weight: bold;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .modal-message {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .app-name {
+                font-size: 1.8rem;
+            }
+            
+            .exam-title {
+                font-size: 1.3rem;
+            }
+            
+            .exam-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px;
+            }
+            
+            .exam-header-left {
+                margin-bottom: 10px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .question-counter {
+                margin-right: 0;
+            }
+            
+            .question-area {
+                padding: 15px;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-btn-group {
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .score-card {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .result-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .app-name {
+                font-size: 1.5rem;
+            }
+            
+            .exam-title {
+                font-size: 1.1rem;
+            }
+            
+            .start-screen, .result-screen {
+                padding: 20px;
+                margin: 15px;
+            }
+            
+            .score-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .option {
+                padding: 12px;
+            }
+            
+            .option-number {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        /* Font Classes */
+        .kokila-font {
+            font-family: 'KOKILA', sans-serif;
+            font-size: 15pt;
+        }
+        
+        .mangal-font {
+            font-family: 'Mangal', sans-serif;
+        }
+        
+        .kruti-dev-font {
+            font-family: 'Kruti Dev', sans-serif;
+            font-size: 15pt;
+        }
+        
+        /* Image Zoom */
+        .img-zoom-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .zoomed-image {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        
+        .close-zoom {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Start Screen -->
+    <div class="app-header">
+        <div class="app-name">Test Series App</div>
+        <div class="app-divider"></div>
+        <div class="exam-title">Exam Questions</div>
+    </div>
+    
+    <div id="start-screen" class="start-screen">
+        <div class="exam-info">
+            <div class="exam-info-item"><strong>Exam Title:</strong> <span id="exam-title-display">Exam Questions</span></div>
+            <div class="exam-info-item"><strong>Total Questions:</strong> <span id="total-questions">0</span></div>
+            <div class="exam-info-item"><strong>Duration:</strong> <span id="exam-duration">0</span> minutes</div>
+            <div class="exam-info-item"><strong>Instructions:</strong></div>
+            <ul style="margin-left: 20px; margin-bottom: 20px;">
+                <li>Answer all questions to the best of your ability</li>
+                <li>You can mark questions for review and come back to them later</li>
+                <li>The exam will automatically submit when time expires</li>
+                <li>Use the question palette to navigate between questions</li>
+            </ul>
+        </div>
+        <button id="start-exam-btn" class="btn btn-accent">Start Test</button>
+    </div>
+    
+    <!-- Exam Container -->
+    <div id="exam-container" class="exam-container">
+        <div class="exam-header">
+            <div class="exam-header-left">
+                <div class="question-counter">Question <span id="current-question-num">1</span> of <span id="total-questions-exam">0</span></div>
+                <div id="timer" class="timer">00:00:00</div>
+            </div>
+            <div class="language-toggle" id="language-toggle" style="display: none;">
+                <button class="toggle-btn active" data-lang="en">EN</button>
+                <button class="toggle-btn" data-lang="hi">HI</button>
+            </div>
+        </div>
+        
+        <div class="question-area">
+            <div class="question-text" id="question-text"></div>
+            <img id="question-image" class="question-image" src="" alt="" style="display: none;">
+            
+            <div class="options-container" id="options-container"></div>
+            
+            <div class="nav-buttons">
+                <div class="nav-btn-group">
+                    <button id="prev-btn" class="btn">Previous</button>
+                    <button id="next-btn" class="btn">Next</button>
+                </div>
+                <div class="nav-btn-group">
+                    <button id="mark-btn" class="btn btn-warning">Mark for Review</button>
+                    <button id="submit-btn" class="btn btn-danger">Submit Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Question Palette Button -->
+    <button id="palette-btn" class="palette-btn" style="display: none;">≡</button>
+    
+    <!-- Question Palette Modal -->
+    <div id="question-palette" class="question-palette">
+        <div class="palette-container">
+            <div class="palette-header">
+                <div class="palette-title">Question Palette</div>
+                <button class="palette-close">&times;</button>
+            </div>
+            <div class="palette-grid" id="palette-grid"></div>
+            <div style="margin-top: 20px; text-align: left;">
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <div class="palette-item current" style="width: 20px; height: 20px; margin-right: 10px;"></div>
+                    <span>Current Question</span>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <div class="palette-item answered" style="width: 20px; height: 20px; margin-right: 10px;"></div>
+                    <span>Answered</span>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <div class="palette-item marked" style="width: 20px; height: 20px; margin-right: 10px;"></div>
+                    <span>Marked for Review</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div class="palette-item not-visited" style="width: 20px; height: 20px; margin-right: 10px;"></div>
+                    <span>Not Visited</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Result Screen -->
+    <div id="result-screen" class="result-screen">
+        <div class="result-header">
+            <h1 class="result-title">Exam Results</h1>
+            <div class="result-subtitle">Here's how you performed on the test</div>
+        </div>
+        
+        <div class="score-card">
+            <div class="score-item">
+                <div class="score-value" id="total-questions-result">0</div>
+                <div class="score-label">Total Questions</div>
+            </div>
+            <div class="score-item">
+                <div class="score-value" id="attempted-questions">0</div>
+                <div class="score-label">Attempted</div>
+            </div>
+            <div class="score-item correct-answer">
+                <div class="score-value" id="correct-answers">0</div>
+                <div class="score-label">Correct</div>
+            </div>
+            <div class="score-item wrong-answer">
+                <div class="score-value" id="wrong-answers">0</div>
+                <div class="score-label">Wrong</div>
+            </div>
+            <div class="score-item accuracy">
+                <div class="score-value" id="accuracy">0%</div>
+                <div class="score-label">Accuracy</div>
+            </div>
+        </div>
+        
+        <div class="result-buttons">
+            <button id="show-solutions-btn" class="btn btn-accent">Show Solutions</button>
+            <button id="restart-exam-btn" class="btn">Restart Test</button>
+        </div>
+        
+        <div id="review-container" class="review-container">
+            <!-- Review questions will be inserted here -->
+        </div>
+    </div>
+    
+    <!-- Image Zoom Container -->
+    <div class="img-zoom-container" id="img-zoom-container">
+        <span class="close-zoom">&times;</span>
+        <img class="zoomed-image" id="zoomed-image" src="" alt="">
+    </div>
+    
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="confirm-modal-title">Confirm Submission</div>
+            <div class="modal-message" id="confirm-modal-message">Are you sure you want to submit the test? You still have time remaining.</div>
+            <div class="modal-buttons">
+                <button id="confirm-cancel" class="btn">Cancel</button>
+                <button id="confirm-submit" class="btn btn-danger">Submit</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample questions data (would normally be loaded from JSON)
+        const sampleQuestions = [
+            {
+                "question": "What is the capital of France?",
+                "option_1": "London",
+                "option_2": "Paris",
+                "option_3": "Berlin",
+                "option_4": "Madrid",
+                "answer": "2",
+                "solution_heading": "Explanation",
+                "solution_text": "Paris is the capital and most populous city of France. It has been one of Europe's major centers of finance, diplomacy, commerce, fashion, science and arts."
+            },
+            {
+                "question": "Which planet is known as the Red Planet?",
+                "option_1": "Venus",
+                "option_2": "Mars",
+                "option_3": "Jupiter",
+                "option_4": "Saturn",
+                "answer": "2",
+                "solution_heading": "Explanation",
+                "solution_text": "Mars is often called the 'Red Planet' because iron minerals in the Martian soil oxidize, or rust, causing the soil and atmosphere to look red."
+            },
+            {
+                "question": "What is the largest mammal?",
+                "option_1": "Elephant",
+                "option_2": "Blue Whale",
+                "option_3": "Giraffe",
+                "option_4": "Polar Bear",
+                "answer": "2",
+                "solution_heading": "Explanation",
+                "solution_text": "The blue whale is the largest mammal and the largest animal ever to have lived on Earth, reaching lengths of up to 100 feet and weights of 200 tons."
+            },
+            {
+                "question": "Which country is home to the kangaroo?",
+                "option_1": "New Zealand",
+                "option_2": "South Africa",
+                "option_3": "Australia",
+                "option_4": "Brazil",
+                "answer": "3",
+                "solution_heading": "Explanation",
+                "solution_text": "Kangaroos are marsupials native to Australia. They are known for their powerful hind legs, large feet, and long muscular tails."
+            },
+            {
+                "question": "What is the chemical symbol for gold?",
+                "option_1": "Go",
+                "option_2": "Gd",
+                "option_3": "Au",
+                "option_4": "Ag",
+                "answer": "3",
+                "solution_heading": "Explanation",
+                "solution_text": "The chemical symbol for gold is Au, which comes from the Latin word 'aurum' meaning 'shining dawn' or 'glow of sunrise'."
+            }
+        ];
+        
+        // Exam configuration
+        const examConfig = {
+            title: "Sample Exam",
+            duration: 5, // in minutes
+            questions: sampleQuestions
+        };
+        
+        // State management
+        let examState = {
+            currentQuestion: 0,
+            answers: {},
+            markedQuestions: [],
+            startTime: null,
+            endTime: null,
+            timerInterval: null
+        };
+        
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const examContainer = document.getElementById('exam-container');
+        const resultScreen = document.getElementById('result-screen');
+        const startExamBtn = document.getElementById('start-exam-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const markBtn = document.getElementById('mark-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const paletteBtn = document.getElementById('palette-btn');
+        const paletteModal = document.getElementById('question-palette');
+        const paletteGrid = document.getElementById('palette-grid');
+        const showSolutionsBtn = document.getElementById('show-solutions-btn');
+        const restartExamBtn = document.getElementById('restart-exam-btn');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmCancel = document.getElementById('confirm-cancel');
+        const confirmSubmit = document.getElementById('confirm-submit');
+        const timerDisplay = document.getElementById('timer');
+        const imgZoomContainer = document.getElementById('img-zoom-container');
+        const zoomedImage = document.getElementById('zoomed-image');
+        const closeZoom = document.querySelector('.close-zoom');
+        
+        // Initialize the app
+        function initApp() {
+            // Set exam info on start screen
+            document.getElementById('exam-title-display').textContent = examConfig.title;
+            document.getElementById('total-questions').textContent = examConfig.questions.length;
+            document.getElementById('exam-duration').textContent = examConfig.duration;
+            document.getElementById('total-questions-exam').textContent = examConfig.questions.length;
+            
+            // Initialize answers array
+            examState.answers = {};
+            examConfig.questions.forEach((_, index) => {
+                examState.answers[index] = {
+                    selected: null,
+                    marked: false
+                };
+            });
+            
+            // Initialize palette
+            initQuestionPalette();
+            
+            // Event listeners
+            startExamBtn.addEventListener('click', startExam);
+            prevBtn.addEventListener('click', showPreviousQuestion);
+            nextBtn.addEventListener('click', showNextQuestion);
+            markBtn.addEventListener('click', toggleMarkForReview);
+            submitBtn.addEventListener('click', showSubmitConfirmation);
+            paletteBtn.addEventListener('click', () => paletteModal.style.display = 'flex');
+            document.querySelector('.palette-close').addEventListener('click', () => paletteModal.style.display = 'none');
+            showSolutionsBtn.addEventListener('click', showSolutions);
+            restartExamBtn.addEventListener('click', restartExam);
+            confirmCancel.addEventListener('click', () => confirmModal.style.display = 'none');
+            confirmSubmit.addEventListener('click', submitExam);
+            closeZoom.addEventListener('click', () => imgZoomContainer.style.display = 'none');
+            
+            // Prevent accidental exit
+            window.addEventListener('beforeunload', handleBeforeUnload);
+        }
+        
+        // Initialize question palette
+        function initQuestionPalette() {
+            paletteGrid.innerHTML = '';
+            examConfig.questions.forEach((_, index) => {
+                const paletteItem = document.createElement('div');
+                paletteItem.className = 'palette-item not-visited';
+                paletteItem.textContent = index + 1;
+                paletteItem.addEventListener('click', () => {
+                    showQuestion(index);
+                    paletteModal.style.display = 'none';
+                });
+                paletteGrid.appendChild(paletteItem);
+            });
+        }
+        
+        // Update question palette
+        function updateQuestionPalette() {
+            const paletteItems = document.querySelectorAll('.palette-item');
+            paletteItems.forEach((item, index) => {
+                // Reset classes
+                item.className = 'palette-item';
+                
+                // Remove current class from all items
+                item.classList.remove('current');
+                
+                // Add appropriate classes
+                if (index === examState.currentQuestion) {
+                    item.classList.add('current');
+                }
+                
+                if (examState.answers[index].selected !== null) {
+                    item.classList.add('answered');
+                } else if (examState.answers[index].marked) {
+                    item.classList.add('marked');
+                } else {
+                    item.classList.add('not-visited');
+                }
+            });
+        }
+        
+        // Start the exam
+        function startExam() {
+            // Hide start screen and show exam container
+            startScreen.style.display = 'none';
+            examContainer.style.display = 'block';
+            paletteBtn.style.display = 'flex';
+            
+            // Record start time
+            examState.startTime = new Date();
+            
+            // Start timer
+            startTimer();
+            
+            // Show first question
+            showQuestion(0);
+        }
+        
+        // Start the countdown timer
+        function startTimer() {
+            const examDurationMs = examConfig.duration * 60 * 1000;
+            const endTime = new Date(examState.startTime.getTime() + examDurationMs);
+            
+            // Update timer immediately
+            updateTimerDisplay(endTime);
+            
+            // Set interval to update timer every second
+            examState.timerInterval = setInterval(() => {
+                updateTimerDisplay(endTime);
+            }, 1000);
+        }
+        
+        // Update timer display
+        function updateTimerDisplay(endTime) {
+            const now = new Date();
+            const timeLeftMs = endTime - now;
+            
+            if (timeLeftMs <= 0) {
+                // Time's up!
+                clearInterval(examState.timerInterval);
+                timerDisplay.textContent = '00:00:00';
+                timerDisplay.className = 'timer time-danger';
+                submitExam();
+                return;
+            }
+            
+            // Calculate hours, minutes, seconds
+            const hours = Math.floor(timeLeftMs / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeftMs % (1000 * 60)) / 1000);
+            
+            // Format as HH:MM:SS
+            const formattedTime = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            timerDisplay.textContent = formattedTime;
+            
+            // Change color when time is running low
+            if (timeLeftMs < 5 * 60 * 1000) { // Less than 5 minutes
+                timerDisplay.className = 'timer time-warning';
+            } else {
+                timerDisplay.className = 'timer';
+            }
+        }
+        
+        // Show a specific question
+        function showQuestion(index) {
+            // Validate index
+            if (index < 0 || index >= examConfig.questions.length) return;
+            
+            // Update current question
+            examState.currentQuestion = index;
+            
+            // Update question counter
+            document.getElementById('current-question-num').textContent = index + 1;
+            
+            // Get current question
+            const question = examConfig.questions[index];
+            
+            // Display question text
+            document.getElementById('question-text').innerHTML = question.question;
+            
+            // Display question image if exists
+            const questionImage = document.getElementById('question-image');
+            if (question.image) {
+                questionImage.src = question.image;
+                questionImage.style.display = 'block';
+                questionImage.onclick = () => zoomImage(question.image);
+            } else {
+                questionImage.style.display = 'none';
+            }
+            
+            // Display options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            for (let i = 1; i <= 4; i++) {
+                const optionKey = `option_${i}`;
+                if (question[optionKey]) {
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'option';
+                    if (examState.answers[index].selected === i.toString()) {
+                        optionDiv.classList.add('selected');
+                    }
+                    
+                    optionDiv.innerHTML = `
+                        <label class="option-label">
+                            <span class="option-number">${i}</span>
+                            <span class="option-text">${question[optionKey]}</span>
+                        </label>
+                    `;
+                    
+                    optionDiv.addEventListener('click', () => selectOption(index, i.toString()));
+                    optionsContainer.appendChild(optionDiv);
+                }
+            }
+            
+            // Update mark button
+            updateMarkButton();
+            
+            // Update navigation buttons
+            updateNavButtons();
+            
+            // Update question palette
+            updateQuestionPalette();
+        }
+        
+        // Zoom image
+        function zoomImage(src) {
+            zoomedImage.src = src;
+            imgZoomContainer.style.display = 'flex';
+        }
+        
+        // Select an option
+        function selectOption(questionIndex, optionIndex) {
+            examState.answers[questionIndex].selected = optionIndex;
+            
+            // Update UI
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[parseInt(optionIndex) - 1];
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+            }
+            
+            // Update palette
+            updateQuestionPalette();
+        }
+        
+        // Toggle mark for review
+        function toggleMarkForReview() {
+            const currentIndex = examState.currentQuestion;
+            examState.answers[currentIndex].marked = !examState.answers[currentIndex].marked;
+            updateMarkButton();
+            updateQuestionPalette();
+        }
+        
+        // Update mark button text
+        function updateMarkButton() {
+            const currentIndex = examState.currentQuestion;
+            if (examState.answers[currentIndex].marked) {
+                markBtn.textContent = 'Unmark';
+                markBtn.classList.add('btn-warning');
+            } else {
+                markBtn.textContent = 'Mark for Review';
+                markBtn.classList.remove('btn-warning');
+            }
+        }
+        
+        // Update navigation buttons
+        function updateNavButtons() {
+            // Previous button
+            if (examState.currentQuestion === 0) {
+                prevBtn.disabled = true;
+                prevBtn.style.opacity = '0.5';
+                prevBtn.style.cursor = 'not-allowed';
+            } else {
+                prevBtn.disabled = false;
+                prevBtn.style.opacity = '1';
+                prevBtn.style.cursor = 'pointer';
+            }
+            
+            // Next button
+            if (examState.currentQuestion === examConfig.questions.length - 1) {
+                nextBtn.textContent = 'Finish';
+            } else {
+                nextBtn.textContent = 'Next';
+            }
+        }
+        
+        // Show previous question
+        function showPreviousQuestion() {
+            if (examState.currentQuestion > 0) {
+                showQuestion(examState.currentQuestion - 1);
+            }
+        }
+        
+        // Show next question
+        function showNextQuestion() {
+            if (examState.currentQuestion < examConfig.questions.length - 1) {
+                showQuestion(examState.currentQuestion + 1);
+            } else {
+                showSubmitConfirmation();
+            }
+        }
+        
+        // Show submit confirmation
+        function showSubmitConfirmation() {
+            const unansweredQuestions = Object.values(examState.answers).filter(a => a.selected === null).length;
+            
+            document.getElementById('confirm-modal-title').textContent = 'Confirm Submission';
+            
+            if (unansweredQuestions > 0) {
+                document.getElementById('confirm-modal-message').innerHTML = 
+                    `You have ${unansweredQuestions} unanswered question${unansweredQuestions > 1 ? 's' : ''}.<br>Are you sure you want to submit the test?`;
+            } else {
+                document.getElementById('confirm-modal-message').textContent = 
+                    'Are you sure you want to submit the test?';
+            }
+            
+            confirmModal.style.display = 'flex';
+        }
+        
+        // Submit the exam
+        function submitExam() {
+            // Record end time
+            examState.endTime = new Date();
+            
+            // Stop timer
+            clearInterval(examState.timerInterval);
+            
+            // Hide exam container and show result screen
+            examContainer.style.display = 'none';
+            paletteBtn.style.display = 'none';
+            resultScreen.style.display = 'block';
+            
+            // Calculate results
+            calculateResults();
+        }
+        
+        // Calculate exam results
+        function calculateResults() {
+            let correct = 0;
+            let wrong = 0;
+            let attempted = 0;
+            
+            examConfig.questions.forEach((question, index) => {
+                if (examState.answers[index].selected !== null) {
+                    attempted++;
+                    
+                    if (examState.answers[index].selected === question.answer) {
+                        correct++;
+                    } else {
+                        wrong++;
+                    }
+                }
+            });
+            
+            const accuracy = attempted > 0 ? Math.round((correct / attempted) * 100) : 0;
+            const timeTaken = formatTimeTaken(examState.startTime, examState.endTime);
+            
+            // Display results
+            document.getElementById('total-questions-result').textContent = examConfig.questions.length;
+            document.getElementById('attempted-questions').textContent = attempted;
+            document.getElementById('correct-answers').textContent = correct;
+            document.getElementById('wrong-answers').textContent = wrong;
+            document.getElementById('accuracy').textContent = `${accuracy}%`;
+        }
+        
+        // Format time taken
+        function formatTimeTaken(startTime, endTime) {
+            const diffMs = endTime - startTime;
+            const minutes = Math.floor(diffMs / (1000 * 60));
+            const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+            
+            return `${minutes}m ${seconds}s`;
+        }
+        
+        // Show solutions
+        function showSolutions() {
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+            
+            examConfig.questions.forEach((question, index) => {
+                const reviewQuestion = document.createElement('div');
+                reviewQuestion.className = 'review-question';
+                
+                // Determine if answer was correct
+                const isCorrect = examState.answers[index].selected === question.answer;
+                const statusClass = isCorrect ? 'status-correct' : 'status-incorrect';
+                const statusText = isCorrect ? 'Correct' : 'Incorrect';
+                
+                // Get user's answer text
+                let userAnswerText = 'Not attempted';
+                if (examState.answers[index].selected !== null) {
+                    const optionKey = `option_${examState.answers[index].selected}`;
+                    userAnswerText = question[optionKey] || 'Invalid option';
+                }
+                
+                // Get correct answer text
+                const correctOptionKey = `option_${question.answer}`;
+                const correctAnswerText = question[correctOptionKey] || 'Invalid option';
+                
+                reviewQuestion.innerHTML = `
+                    <div class="review-question-header">
+                        <div class="review-question-number">Question ${index + 1}</div>
+                        <div class="review-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="review-question-text">${question.question}</div>
+                    
+                    <div class="review-answer user-answer">
+                        <div class="review-label">Your Answer:</div>
+                        ${userAnswerText}
+                    </div>
+                    
+                    <div class="review-answer correct-answer-review">
+                        <div class="review-label">Correct Answer:</div>
+                        ${correctAnswerText}
+                    </div>
+                    
+                    ${question.solution_text ? `
+                    <div class="review-solution">
+                        <div class="solution-heading">${question.solution_heading || 'Explanation'}</div>
+                        ${question.solution_text}
+                    </div>
+                    ` : ''}
+                `;
+                
+                reviewContainer.appendChild(reviewQuestion);
+            });
+            
+            // Show the review container
+            reviewContainer.style.display = 'block';
+            
+            // Change button text
+            showSolutionsBtn.textContent = 'Hide Solutions';
+            showSolutionsBtn.removeEventListener('click', showSolutions);
+            showSolutionsBtn.addEventListener('click', hideSolutions);
+        }
+        
+        // Hide solutions
+        function hideSolutions() {
+            document.getElementById('review-container').style.display = 'none';
+            showSolutionsBtn.textContent = 'Show Solutions';
+            showSolutionsBtn.removeEventListener('click', hideSolutions);
+            showSolutionsBtn.addEventListener('click', showSolutions);
+        }
+        
+        // Restart exam
+        function restartExam() {
+            // Reset exam state
+            examState = {
+                currentQuestion: 0,
+                answers: {},
+                markedQuestions: [],
+                startTime: null,
+                endTime: null,
+                timerInterval: null
+            };
+            
+            // Hide result screen and show start screen
+            resultScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+            
+            // Reinitialize
+            initApp();
+        }
+        
+        // Handle beforeunload event
+        function handleBeforeUnload(e) {
+            if (examContainer.style.display === 'block') {
+                e.preventDefault();
+                e.returnValue = 'Are you sure you want to leave? Your exam progress will be lost.';
+                return e.returnValue;
+            }
+        }
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
